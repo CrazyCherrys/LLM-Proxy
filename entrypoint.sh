@@ -15,5 +15,5 @@ fi
 # 确保日志目录存在
 mkdir -p /var/log/nginx
 
-# 启动Nginx（前台运行）
+# 启动Nginx
 exec nginx -g 'daemon off;'

@@ -9,25 +9,6 @@
 
 ## 安装
 
-### 使用 Docker 安装
-
-1. 克隆仓库：
-```bash
-git clone https://github.com/yourusername/llm-proxy.git
-cd llm-proxy
-```
-
-2. 配置环境变量：
-```bash
-export TARGET_API=https://your-llm-api.com
-export PORT=8080  # 可选，默认 80
-```
-
-3. 启动服务：
-```bash
-docker-compose up -d
-```
-
 ### 直接安装
 
 1. 安装 Nginx：
@@ -48,30 +29,27 @@ sudo nginx -t && sudo nginx
 
 ## 配置
 
-### 环境变量
+### 主要配置文件
 
-| 变量名 | 说明 | 默认值 |
-|--------|------|--------|
-| TARGET_API | 目标 API 地址 | - |
-| PORT | 监听端口 | 80 |
-| WORKER_PROCESSES | Nginx 工作进程数 | auto |
+- `config/nginx.conf`：主配置文件，包含代理、缓存、WebSocket、健康检查等设置
 
-### 配置文件
+### 关键路径
 
-主要配置文件位于 `config/nginx.conf`，包含以下主要部分：
+- `/v1/`：所有以 `/v1/` 开头的请求会被代理到目标 API
+- `/health`：健康检查接口，返回 `healthy` 字符串
+- `/`：根路径，返回欢迎页面
 
-- 代理设置
-- 缓存控制
-- WebSocket 支持
-- 安全头部
-- 日志配置
+### 变量说明
+
+| 变量名 | 说明 | 示例 |
+|--------|------|------|
+| TARGET_API | 目标 API 地址 | https://your-llm-api.com |
 
 ## 使用
 
 ### 基本代理
 
 ```bash
-# 代理到目标 API
 curl http://localhost/v1/chat/completions
 ```
 
@@ -148,8 +126,8 @@ tail -f /var/log/nginx/error.log
 ### 性能优化
 
 1. 调整工作进程数：
-```bash
-export WORKER_PROCESSES=4
+```nginx
+worker_processes 4;
 ```
 
 2. 启用压缩：
